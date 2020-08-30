@@ -1,25 +1,29 @@
-'''
----------------------------------------------------------------------
-Copyright © 2020, Ailson Software Development
+########################################################################
+## MIT License
+## Copyright © 2020, Ailson Software Development
+##
+## Autor: Ailson Araujo
+## Versão: 1.0.0
+## Data: 29/08/2020
+##
+## Este projeto pode ser usado livremente, desde que mantenham
+## os respectivos créditos apenas nos scripts Python.
+##
+## PROGRESSEBAR DESIGNER BY: WANDERSON M.PIMENTA
+########################################################################
 
-GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-
-Autor: Ailson Araujo
-Versão: 1.0
-Data: 11/07/2020
----------------------------------------------------------------------
-'''
 
 import sys
 import os
 import time
-#import _thread
+import socket
+
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import QThread, pyqtSignal, QPropertyAnimation
-from interface import Ui_central
+from ui_main import Ui_central
 import UI_resource_rc
-import socket
+import c_progressbar
 
 class LoopRequest(QThread):
 
@@ -47,14 +51,17 @@ class Central(QtWidgets.QMainWindow, Ui_central):
     def __init__(self, *args, obj=None, **kwargs):
         super(Central, self).__init__(*args, **kwargs)
         self.setupUi(self)
+        self.btn_monitor.setChecked(True)
+        self.label_page.setText("Monitor")
+        c_progressbar.SetValueProgressBar(0, 0, self.labelTemperatura, self.ProgressTemperatura)
+        c_progressbar.SetValueProgressBar(1, 0, self.labelHumidade, self.ProgressHumidade)
 
-        self.btn_monitor.clicked.connect(lambda:self.stackedWidget.setCurrentIndex(0))
-        self.btn_grafico.clicked.connect(lambda:self.stackedWidget.setCurrentIndex(1))
-        self.btn_monitor.clicked.connect(lambda:self.marcador(self.btn_monitor))
-        self.btn_grafico.clicked.connect(lambda:self.marcador(self.btn_grafico))
+        self.btn_monitor.clicked.connect(lambda:self.select_page(self.btn_monitor))
+        self.btn_grafico.clicked.connect(lambda:self.select_page(self.btn_grafico))
+        self.btn_setting.clicked.connect(lambda:self.select_page(self.btn_setting))
 
-        self.btn_menu.clicked.connect(lambda: self.toggleMenu(190, True))
-        self.request()
+        self.btn_menu.clicked.connect(lambda: self.Menu(190, True))
+        #self.request()
 
         # self.bt_on.setDisabled(True)
         # self.bt_off.setDisabled(True)
@@ -66,98 +73,53 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         #self.bt_on.clicked.connect(self.on)
         #self.bt_off.clicked.connect(self.off)
 
-    def loop(self, x):
-        ProgressBar().set_value_temp(x, self.labelTemperatura, self.ProgressTemperatura)
-        ProgressBar().set_value_humd(x, self.labelHumidade, self.ProgressHumidade)
+    def loop(self, value):
+        c_progressbar.SetValueProgressBar(0, value, self.labelTemperatura, self.ProgressTemperatura)
+        c_progressbar.SetValueProgressBar(1, value, self.labelHumidade, self.ProgressHumidade)
 
-    def marcador(self, button):
-        btn = [self.btn_monitor, self.btn_grafico]
+    # Exibe a pagina selecionada do stackeWidget
+    def select_page(self, button):
+        
+        # inverte o valor do button que estava checked
+        btn = [self.btn_monitor, self.btn_grafico, self.btn_setting]
         btn.remove(button)
         for b in btn:
             b.setChecked(False)
-    
-            ## ==> SET VALUES TO DEF progressBarValue
-        def setValue(self, slider, labelPercentage, progressBarName, color):
 
-            # GET SLIDER VALUE
-            value = slider.value()
+        #Exibe a pagina
+        if button == self.btn_monitor:
+            self.stackedWidget.setCurrentIndex(0)
+            self.label_page.setText("Monitor")
+        if button == self.btn_grafico:
+            self.stackedWidget.setCurrentIndex(1)
+            self.label_page.setText("Gráfico")
+        if button == self.btn_setting:
+            self.stackedWidget.setCurrentIndex(2)
+            self.label_page.setText("Configurações")
 
-            # CONVERT VALUE TO INT
-            sliderValue = int(value)
+    # Alterna a largura do menu 
+    def Menu(self, maxWidth, enable):
 
-            # HTML TEXT PERCENTAGE
-            htmlText = """<p align="center"><span style=" font-size:50pt;">{VALUE}</span><span style=" font-size:40pt; vertical-align:super;">%</span></p>"""
-            labelPercentage.setText(htmlText.replace("{VALUE}", str(sliderValue)))
-
-            # CALL DEF progressBarValue
-            self.progressBarValue(sliderValue, progressBarName, color)
-
-    def setValue(self, slider, labelPercentage, progressBarName, color):
-
-            # GET SLIDER VALUE
-            value = slider
-
-            # CONVERT VALUE TO INT
-            sliderValue = int(value)
-
-            # HTML TEXT PERCENTAGE
-            htmlText = """<p align="center"><span style=" font-size:50pt;">{VALUE}</span><span style=" font-size:40pt; vertical-align:super;">%</span></p>"""
-            labelPercentage.setText(htmlText.replace("{VALUE}", str(sliderValue)))
-
-            # CALL DEF progressBarValue
-            self.progressBarValue(sliderValue, progressBarName, color)
-
-    ## DEF PROGRESS BAR VALUE
-    ########################################################################
-    def progressBarValue(self, value, widget, color):
-
-        # PROGRESSBAR STYLESHEET BASE
-        styleSheet = """
-        QFrame{
-        	border-radius: 110px;
-        	background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:{STOP_1} rgba(255, 0, 127, 0), stop:{STOP_2} {COLOR});
-        }
-        """
-
-        # GET PROGRESS BAR VALUE, CONVERT TO FLOAT AND INVERT VALUES
-        # stop works of 1.000 to 0.000
-        progress = (100 - value) / 100.0
-
-        # GET NEW VALUES
-        stop_1 = str(progress - 0.001)
-        stop_2 = str(progress)
-
-        # FIX MAX VALUE
-        if value == 100:
-            stop_1 = "1.000"
-            stop_2 = "1.000"
-
-        # SET VALUES TO NEW STYLESHEET
-        newStylesheet = styleSheet.replace("{STOP_1}", stop_1).replace("{STOP_2}", stop_2).replace("{COLOR}", color)
-
-        # APPLY STYLESHEET WITH NEW VALUES
-        self.ProgressTemperatura.setStyleSheet(newStylesheet)
-
-    def toggleMenu(self, maxWidth, enable):
         if enable:
-            # GET WIDTH
+            # obtem a largura
             width = self.frame_menu.width()
-            maxExtend = maxWidth
-            standard = 60
+            width_standard = 60
 
-            # SET MAX WIDTH
-            if width == standard:
-                widthExtended = maxExtend
+            # Define a maxima largura
+            if width == width_standard:
+                widthExtended = maxWidth
             else:
-                widthExtended = standard
+                widthExtended = width_standard
 
-            # ANIMATION
+            # Animação
             self.animation = QPropertyAnimation(self.frame_menu, b"minimumWidth")
             self.animation.setDuration(400)
             self.animation.setStartValue(width)
             self.animation.setEndValue(widthExtended)
             self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
             self.animation.start()
+
+
 
     def conn(self, status):
 
@@ -228,101 +190,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.terminal.appendPlainText(msg_server.decode('utf-8'))
             self.terminal.ensureCursorVisible()
 
-class ProgressBar():
 
-    def set_value_temp(self, value, label, widget):
-
-        if value <= 20:
-            color = "rgba(85, 170, 255, 255)"
-        if value > 20 and value <= 40:
-            color = "rgba(30, 255, 45, 255)"
-        if value > 40 and value <= 60:
-            color = "rgba(240, 240, 35, 255)"
-        if value > 60 and value <= 80:
-            color = "rgba(255, 125, 30, 255)"
-        if value > 80 and value <= 200:
-            color = "rgba(240, 30, 30, 255)"
-
-        value = int(value)
-        htmlText = """<p align="center"><span style=" font-size:50pt; color:{COLOR}">{VALUE}</span>
-                      <span style=" font-size:55pt; vertical-align:super; color:{COLOR}">°</span></p>"""
-
-        label.setText(htmlText.replace("{VALUE}", str(value)).replace("{COLOR}", color))
-
-        # BASE STYLESHEET PROGRESSBAR
-        styleSheet = """
-        QFrame{
-        	border-radius: 110px;
-        	background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:{STOP_1} rgba(255, 0, 127, 0), stop:{STOP_2} {COLOR});
-        }
-        """
-        # GET PROGRESS BAR VALUE, CONVERT TO FLOAT AND INVERT VALUES
-        # stop works of 1.000 to 0.000
-        progress = (100 - value) / 100.0
-
-        # GET NEW VALUES
-        stop_1 = str(progress - 0.003)
-        stop_2 = str(progress)
-
-        # FIX MAX VALUE
-        if value == 100:
-            stop_1 = "1"
-            stop_2 = "1"
-
-        # SET VALUES TO NEW STYLESHEET
-        newStylesheet = styleSheet.replace("{STOP_1}", stop_1).replace("{STOP_2}", stop_2).replace("{COLOR}", color)
-
-        # APPLY STYLESHEET WITH NEW VALUES
-        widget.setStyleSheet(newStylesheet)
-
-    def set_value_humd(self, value, label, widget):
-
-        if value <= 20:
-            #color = "rgba(85, 170, 255, 255)"
-            color = "rgba(240, 30, 30, 255)"
-        if value > 20 and value <= 40:
-            #color = "rgba(30, 255, 45, 255)"
-            color = "rgba(255, 125, 30, 255)"
-        if value > 40 and value <= 60:
-            color = "rgba(240, 240, 35, 255)"
-        if value > 60 and value <= 80:
-            #color = "rgba(255, 125, 30, 255)"
-            color = "rgba(30, 255, 45, 255)"
-        if value > 80 and value <= 200:
-            #color = "rgba(240, 30, 30, 255)"
-            color = "rgba(85, 170, 255, 255)"
-
-        value = int(value)
-        htmlText = """<p align="center"><span style=" font-size:50pt; color:{COLOR}">{VALUE}</span>
-                      <span style=" font-size:40pt; vertical-align:super; color:{COLOR}">%</span></p>"""
-
-        label.setText(htmlText.replace("{VALUE}", str(value)).replace("{COLOR}", color))
-
-        # BASE STYLESHEET PROGRESSBAR
-        styleSheet = """
-        QFrame{
-        	border-radius: 110px;
-        	background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:{STOP_1} rgba(255, 0, 127, 0), stop:{STOP_2} {COLOR});
-        }
-        """
-        # GET PROGRESS BAR VALUE, CONVERT TO FLOAT AND INVERT VALUES
-        # stop works of 1.000 to 0.000
-        progress = (100 - value) / 100.0
-
-        # GET NEW VALUES
-        stop_1 = str(progress - 0.003)
-        stop_2 = str(progress)
-
-        # FIX MAX VALUE
-        if value == 100:
-            stop_1 = "1"
-            stop_2 = "1"
-
-        # SET VALUES TO NEW STYLESHEET
-        newStylesheet = styleSheet.replace("{STOP_1}", stop_1).replace("{STOP_2}", stop_2).replace("{COLOR}", color)
-
-        # APPLY STYLESHEET WITH NEW VALUES
-        widget.setStyleSheet(newStylesheet)
 
 if __name__=='__main__':
 
