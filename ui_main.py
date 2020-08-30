@@ -307,7 +307,9 @@ class Ui_central(object):
         font.setFamily("Roboto Thin")
         font.setPointSize(30)
         self.labelTemperatura.setFont(font)
-        self.labelTemperatura.setStyleSheet("color: rgb(115, 185, 255); padding: 0px; background-color: none;")
+        self.labelTemperatura.setStyleSheet("color: rgb(115, 185, 255); \n"
+"padding: 0px; \n"
+"background-color: none;")
         self.labelTemperatura.setAlignment(QtCore.Qt.AlignCenter)
         self.labelTemperatura.setIndent(-1)
         self.labelTemperatura.setObjectName("labelTemperatura")
@@ -431,27 +433,8 @@ class Ui_central(object):
 "background-color: transparent;")
         self.labelBoxBlenderInstalation.setObjectName("labelBoxBlenderInstalation")
         self.gridLayout_2.addWidget(self.labelBoxBlenderInstalation, 0, 0, 1, 2)
-        self.lineEdit_IP = QtWidgets.QLineEdit(self.frame_conection)
-        self.lineEdit_IP.setMinimumSize(QtCore.QSize(0, 30))
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        self.lineEdit_IP.setFont(font)
-        self.lineEdit_IP.setStyleSheet("QLineEdit {\n"
-"    background-color: rgb(27, 29, 35);\n"
-"    border-radius: 5px;\n"
-"    border: 2px solid rgb(27, 29, 35);\n"
-"    padding-left: 10px;\n"
-"    color: rgb(110, 110, 110);\n"
-"}\n"
-"QLineEdit:hover {\n"
-"    border: 2px solid rgb(64, 71, 88);\n"
-"}\n"
-"QLineEdit:focus {\n"
-"    border: 2px solid rgb(91, 101, 124);\n"
-"}")
-        self.lineEdit_IP.setObjectName("lineEdit_IP")
-        self.gridLayout_2.addWidget(self.lineEdit_IP, 1, 0, 1, 1)
         self.btn_connect = QtWidgets.QPushButton(self.frame_conection)
+        self.btn_connect.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -476,26 +459,12 @@ class Ui_central(object):
 "QPushButton:pressed {    \n"
 "    background-color: rgb(35, 40, 49);\n"
 "    border: 2px solid rgb(43, 50, 61);\n"
+"}\n"
+"QPushButton:disabled{\n"
+"    color: rgb(40, 44, 52);\n"
 "}")
         self.btn_connect.setObjectName("btn_connect")
         self.gridLayout_2.addWidget(self.btn_connect, 1, 1, 1, 1)
-        self.lineEdit_Porta = QtWidgets.QLineEdit(self.frame_conection)
-        self.lineEdit_Porta.setMinimumSize(QtCore.QSize(0, 30))
-        self.lineEdit_Porta.setStyleSheet("QLineEdit {\n"
-"    background-color: rgb(27, 29, 35);\n"
-"    border-radius: 5px;\n"
-"    border: 2px solid rgb(27, 29, 35);\n"
-"    padding-left: 10px;\n"
-"    color: rgb(110, 110, 110);\n"
-"}\n"
-"QLineEdit:hover {\n"
-"    border: 2px solid rgb(64, 71, 88);\n"
-"}\n"
-"QLineEdit:focus {\n"
-"    border: 2px solid rgb(91, 101, 124);\n"
-"}")
-        self.lineEdit_Porta.setObjectName("lineEdit_Porta")
-        self.gridLayout_2.addWidget(self.lineEdit_Porta, 2, 0, 1, 1)
         self.btn_save = QtWidgets.QPushButton(self.frame_conection)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -521,12 +490,51 @@ class Ui_central(object):
 "QPushButton:pressed {    \n"
 "    background-color: rgb(35, 40, 49);\n"
 "    border: 2px solid rgb(43, 50, 61);\n"
+"}\n"
+"QPushButton:disabled{\n"
+"    color: rgb(40, 44, 52);\n"
 "}")
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/16x16/icons/16x16/cil-folder-open.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btn_save.setIcon(icon1)
         self.btn_save.setObjectName("btn_save")
         self.gridLayout_2.addWidget(self.btn_save, 2, 1, 1, 1)
+        self.lineEdit_Porta = QtWidgets.QLineEdit(self.frame_conection)
+        self.lineEdit_Porta.setMinimumSize(QtCore.QSize(0, 30))
+        self.lineEdit_Porta.setStyleSheet("QLineEdit {\n"
+"    background-color: rgb(27, 29, 35);\n"
+"    border-radius: 5px;\n"
+"    border: 2px solid rgb(27, 29, 35);\n"
+"    padding-left: 10px;\n"
+"    color: rgb(110, 110, 110);\n"
+"}\n"
+"QLineEdit:hover {\n"
+"    border: 2px solid rgb(64, 71, 88);\n"
+"}\n"
+"QLineEdit:focus {\n"
+"    border: 2px solid rgb(91, 101, 124);\n"
+"}")
+        self.lineEdit_Porta.setText("")
+        self.lineEdit_Porta.setObjectName("lineEdit_Porta")
+        self.gridLayout_2.addWidget(self.lineEdit_Porta, 2, 0, 1, 1)
+        self.lineEdit_IP = QtWidgets.QLineEdit(self.frame_conection)
+        self.lineEdit_IP.setMinimumSize(QtCore.QSize(0, 30))
+        self.lineEdit_IP.setStyleSheet("QLineEdit {\n"
+"    background-color: rgb(27, 29, 35);\n"
+"    border-radius: 5px;\n"
+"    border: 2px solid rgb(27, 29, 35);\n"
+"    padding-left: 10px;\n"
+"    color: rgb(110, 110, 110);\n"
+"}\n"
+"QLineEdit:hover {\n"
+"    border: 2px solid rgb(64, 71, 88);\n"
+"}\n"
+"QLineEdit:focus {\n"
+"    border: 2px solid rgb(91, 101, 124);\n"
+"}")
+        self.lineEdit_IP.setText("")
+        self.lineEdit_IP.setObjectName("lineEdit_IP")
+        self.gridLayout_2.addWidget(self.lineEdit_IP, 1, 0, 1, 1)
         self.horizontalLayout.addWidget(self.frame_conection)
         self.frame_status = QtWidgets.QFrame(self.page_monitor)
         self.frame_status.setMinimumSize(QtCore.QSize(0, 0))
@@ -539,19 +547,6 @@ class Ui_central(object):
         self.frame_status.setObjectName("frame_status")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.frame_status)
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.label_status = QtWidgets.QLabel(self.frame_status)
-        self.label_status.setMaximumSize(QtCore.QSize(16777215, 40))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
-        font.setPointSize(32)
-        font.setBold(False)
-        font.setWeight(50)
-        self.label_status.setFont(font)
-        self.label_status.setStyleSheet("color: rgb(82, 188, 86);\n"
-"background-color: transparent;")
-        self.label_status.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_status.setObjectName("label_status")
-        self.gridLayout_5.addWidget(self.label_status, 1, 1, 1, 1)
         self.labelBoxBlenderInstalation_2 = QtWidgets.QLabel(self.frame_status)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -569,7 +564,20 @@ class Ui_central(object):
 "background-color: transparent;")
         self.labelBoxBlenderInstalation_2.setObjectName("labelBoxBlenderInstalation_2")
         self.gridLayout_5.addWidget(self.labelBoxBlenderInstalation_2, 0, 1, 1, 1)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.label_status = QtWidgets.QLabel(self.frame_status)
+        self.label_status.setMaximumSize(QtCore.QSize(16777215, 40))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(23)
+        font.setBold(False)
+        font.setWeight(50)
+        self.label_status.setFont(font)
+        self.label_status.setStyleSheet("color: rgb(115, 185, 255);\n"
+"background-color: transparent;")
+        self.label_status.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_status.setObjectName("label_status")
+        self.gridLayout_5.addWidget(self.label_status, 1, 1, 1, 1)
+        spacerItem6 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_5.addItem(spacerItem6, 2, 1, 1, 1)
         self.horizontalLayout.addWidget(self.frame_status)
         self.gridLayout_6.addLayout(self.horizontalLayout, 0, 0, 1, 5)
@@ -577,6 +585,7 @@ class Ui_central(object):
         self.gridLayout_4.setSpacing(0)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.btn_run = QtWidgets.QPushButton(self.page_monitor)
+        self.btn_run.setEnabled(True)
         self.btn_run.setMinimumSize(QtCore.QSize(60, 50))
         self.btn_run.setMaximumSize(QtCore.QSize(60, 50))
         self.btn_run.setStyleSheet("QPushButton{\n"
@@ -594,6 +603,9 @@ class Ui_central(object):
 "}\n"
 "QPushButton:checked {\n"
 "    background-image: url(:/icons/icons/cil-media-pause.png);\n"
+"}\n"
+"QPushButton:disabled{\n"
+"    background-image: url(:/icons/icons/cil-media-play-dark.png);\n"
 "}")
         self.btn_run.setText("")
         self.btn_run.setCheckable(True)
@@ -633,12 +645,10 @@ class Ui_central(object):
         self.labelHumidade.setText(_translate("central", "<html><head/><body><p align=\"center\"><span style=\" font-size:50pt;\">0</span><span style=\" font-size:40pt; vertical-align:super;\">%</span></p></body></html>"))
         self.label_IconHumd.setText(_translate("central", "<html><head/><body><p><br/></p></body></html>"))
         self.labelBoxBlenderInstalation.setText(_translate("central", "CONEXÃO"))
-        self.lineEdit_IP.setText(_translate("central", "Endereço IP:"))
-        self.lineEdit_IP.setPlaceholderText(_translate("central", "Your Password"))
         self.btn_connect.setText(_translate("central", "Conectar"))
-        self.lineEdit_Porta.setText(_translate("central", "Porta:"))
-        self.lineEdit_Porta.setPlaceholderText(_translate("central", "Your Password"))
         self.btn_save.setText(_translate("central", "Salvar Conexão"))
-        self.label_status.setText(_translate("central", "Conectado"))
+        self.lineEdit_Porta.setPlaceholderText(_translate("central", "Porta"))
+        self.lineEdit_IP.setPlaceholderText(_translate("central", "Endereço IP"))
         self.labelBoxBlenderInstalation_2.setText(_translate("central", "STATUS"))
+        self.label_status.setText(_translate("central", "Aguardando Conexão"))
 import UI_resource_rc
