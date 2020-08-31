@@ -25,7 +25,6 @@ from ui_main import Ui_central
 import UI_resource_rc
 
 import c_progressbar
-#from c_thread import Pause
 import c_thread
 
 # class LoopRequest(QThread):
