@@ -34,7 +34,6 @@ class Central(QtWidgets.QMainWindow, Ui_central):
     def __init__(self, *args, obj=None, **kwargs):
         super(Central, self).__init__(*args, **kwargs)
         self.setupUi(self)
-        self.threadpool = QThreadPool()
         #Inicialização
         self.disable_button(0,1,1)
         self.btn_monitor.setChecked(True)
@@ -73,6 +72,9 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.btn_save.setDisabled(save)
         self.btn_run.setDisabled(run)
 
+        if not conn:
+            self.btn_run.setChecked(False)
+
     # Define mensagem na label Status
     def msg_status(self, segundos, msg, color):
         '''Segundos: tempo de espera para definir a mensagem
@@ -90,7 +92,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.pause = c_thread.Pause(segundos)
             self.pause.signal.connect(lambda:self.msg_status(0, msg, color))
             self.pause.start()
-
+            
 
     def loop(self, value):
         c_progressbar.SetValueProgressBar(0, value, self.labelTemperatura, self.ProgressTemperatura)
@@ -140,7 +142,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
 
     # Validação de IP e Porta
     def validation(self):
-
+        global ip, porta
         ip = self.lineEdit_IP.text()
         porta = self.lineEdit_Porta.text()
         if ip == '' and porta == '':
@@ -153,6 +155,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
 
         elif ip != '' and porta != '':
             try:
+                # Testa se é um IP válido
                 socket.inet_pton(socket.AF_INET, ip)
             except socket.error: 
                 self.msg_status(0, 'IP Inválido!', 'red')
@@ -160,12 +163,14 @@ class Central(QtWidgets.QMainWindow, Ui_central):
                 self.lineEdit_IP.setFocus()
             else:
                 try:
+                    # Testa se é um numero inteiro
                     porta = int(porta)
                 except ValueError:
                     self.msg_status(0, 'Porta Inválida!', 'red')
                     self.msg_status(3, 'Desconectado', 'red')
                     self.lineEdit_Porta.setFocus()
                 else:
+                    # Testa se esta entre os valores de portas válidas
                     if porta >= 0 and porta <= 65535:                        
                         self.conn(ip, porta)
 
@@ -180,98 +185,33 @@ class Central(QtWidgets.QMainWindow, Ui_central):
     # Conecta ao servidor
     def conn(self, host, porta):
 
+        # Realiza a conexão com o servidor em um processamento paralelo
         self.connect_server = c_thread.ConnectServer(host, porta)
         self.connect_server.msg.connect(self.msg_status)
         self.connect_server.button.connect(self.disable_button)
         self.connect_server.start()
 
-        # try:
-        #     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # except:
-        #     self.msg_status(0, 'Falha ao estabelecer ligação!', 'red')
-        #     self.msg_status(3, 'Desconectado', 'red')
-        # else:
-        #     if client.connect_ex((host, porta)) == 0:
-        #         self.msg_status(0, 'Conectado', 'green')
-        #         self.disable_button(1,0,0)
-        #         msg = 'ailson' +'\n'
-        #         client.send(msg.encode())
-        #         msg_server = client.recv(2048).decode('utf-8')
-        #         print (msg_server)
-        #     else:
-        #         self.msg_status(0, 'Falha ao tentar se conectar!', 'red')
-        #         self.msg_status(3, 'Desconectado', 'red')
-
-        # try:
-        #     HOST = self.lineEditHost.text()
-        #     PORT = int(self.lineEditPort.text())
-        #     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # except:
-        #     self.terminal.insertPlainText("---->Falha ao tentar se conectar ao servidor!<----\n\n")
-        #     self.bt_on.setDisabled(True)
-        #     self.bt_off.setDisabled(True)
-        #     return
-        # else:
-        #     if client.connect_ex((HOST, PORT)) == 0:
-        #         if status:
-        #             self.bt_on.setDisabled(False)
-        #             self.bt_off.setDisabled(False)
-        #             self.terminal.insertPlainText("---->Servidor Conectado!<----\n\n")
-        #         else:
-        #             return client
-
-        #     else:
-        #         self.terminal.insertPlainText("---->Falha ao tentar se conectar ao servidor!<----\n\n")
-        #         self.terminal.insertPlainText("Tentando Reconecta-se...\n")
-        #         self.bt_on.setDisabled(True)
-        #         self.bt_off.setDisabled(True)
-        #         self.reconn(client, HOST, PORT)
-
+    # Inicia a solicitação ao servidor
     def play_stop(self):
         
         if self.btn_run.isChecked():
             c_thread.play = True
             self.loop_request = c_thread.LoopRequest(2)
+            self.loop_request.msg.connect(self.msg_status)
+            self.loop_request.button.connect(self.disable_button)
+            self.loop_request.error.connect(self.reconn) # Chama reconn se houver erro de conexão
             self.loop_request.start()
 
         else:          
             c_thread.play = False
-            
-            
-    def reconn(self, client, HOST, PORT):
 
-
-        contador = 0
-        while(client.connect_ex((HOST, PORT)) != 0):
-            contador = contador + 1
-            print (contador)
-            if contador == 10:
-                self.terminal.insertPlainText("\n---->Impossivel conecta-se ao Servidor!<----\n\n")
-                break
-
-        else:
-            self.terminal.insertPlainText("\n---->Servidor Conectado!<----\n\n")
-            self.bt_on.setDisabled(False)
-            self.bt_off.setDisabled(False)
-
-
-    def request(self):
-
-        self.loop_request = c_thread.LoopRequest(0.1)
-        self.loop_request.start()
-        self.loop_request.signal.connect(self.loop)
-
-    def comand(self, cmd):
-
-        client = self.conn(False)
-
-        if client != None:
-            msg = cmd +'\n'
-            client.send(msg.encode())
-            msg_server = client.recv(2048)
-            self.terminal.appendPlainText(msg_server.decode('utf-8'))
-            self.terminal.ensureCursorVisible()
-
+    # Tenta a reconexão com o servidor     
+    def reconn(self):
+        self.reconn_server = c_thread.ReConn(ip, porta, 3, 10)
+        self.reconn_server.msg.connect(self.msg_status)
+        self.reconn_server.button.connect(self.disable_button)
+        self.reconn_server.re_conn.connect(self.play_stop)  # Chama play_stop se reconexão estabelecida
+        self.reconn_server.start()
 
 
 if __name__=='__main__':
@@ -285,4 +225,5 @@ if __name__=='__main__':
     # encerra a aplicação
     sys.exit(app.exec_())
 
-ACTIVATED = ''
+ip = ''
+porta = ''
