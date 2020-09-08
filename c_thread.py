@@ -53,7 +53,7 @@ class LoopRequest(QThread):
                 client.send(msg.encode())
             except:
                 # Variavel Global que determina que o loop de reconexão deve continuar
-                reconn = False     
+                reconn = False
                 self.msg.emit(0, 'Conexão perdida!', 'red')
                 self.error.emit()
                 return
@@ -118,18 +118,12 @@ class ReConn(QThread):
         self.number_try = number_try
 
     def run(self):
-        
+        global label_loading
         cont = 0
-        loading = ''
         self.msg.emit(2, 'Tentando Reconectar-se', 'blue')
-
-        # Inicia a tentativa 2 segundos após exibição da mensagem
-        time.sleep(4)
 
         while (cont < self.number_try):
             cont += 1
-            loading += '.'
-            self.msg.emit(0, 'Reconectando %s' %loading, 'blue')
 
             # Intervalo para tentar nova conexão
             time.sleep(self.interval)
@@ -140,23 +134,65 @@ class ReConn(QThread):
 
             # Se conexão estabelecida chama a função "is_connected"
             self.connect_server.conn.connect(self.is_connected)
-            if reconn:
-                self.msg.emit(0, 'Conectado', 'green')
 
-                # Emite sinal de que a reconexão foi estabelecida
-                self.re_conn.emit() 
+            if reconn:
+                label_loading = False   # Interrompe o loop da classe Loading quando reconexão estabelecida
+                self.re_conn.emit()     # Emite sinal de que a reconexão foi estabelecida
                 return
 
-        self.msg.emit(0, 'Falha ao tentar reconectar-se!', 'red')
-        self.msg.emit(3, 'Desconectado', 'red')
-        self.button.emit(0,1,1)
+        # Interrompe o loop da classe Loading quando reconexão perdida
+        label_loading = False
 
     # Define a variavel global "reconn" como True 
     def is_connected(self):
         global reconn
         reconn = True
 
+# Define mensagens na label status quando em reconexão
+class Loading(QThread):
+    '''caracter: caractere a ser incrementado
+    num_caracter: número máximo de caractere a ser exibido
+    interval: intervalo em segundos para incremento do caractere'''
+
+    msg = pyqtSignal(int, str, str)         # retorna sinal com parametros para mensagem de status
+    button = pyqtSignal(bool, bool, bool)   # retorna sinal com parametros para habilitar e desabilitar buttons
+
+    def __init__(self, caracter, num_caracter, interval):
+        super(Loading, self).__init__()
+        self.caracter = caracter
+        self.num_caracter = num_caracter
+        self.interval = interval
+        
+    def run(self):
+        time.sleep(4)
+        while (label_loading == True):
+            loading = ''
+            time.sleep(self.interval)
+            
+            for i in range(self.num_caracter):
+                # Interrompe o loop quando conexão reestabelecida
+                if not label_loading:
+                    break
+
+                # Realiza o incremento e emit o sinal
+                loading += self.caracter
+                self.msg.emit(0, loading, 'blue')
+                time.sleep(self.interval)
+
+            # Após incremento limpa a label status   
+            self.msg.emit(0, '', 'blue')
+
+        # Se reconexão reestabelecida
+        if reconn:
+            self.msg.emit(0, 'Conectado', 'green')
+
+        else:
+            self.msg.emit(0, 'Impossível reconectar-se!', 'red')
+            self.msg.emit(3, 'Desconectado', 'red')
+            self.button.emit(0,1,1)
+
 # Variaveis Global
-play = True     # pausa a execução do loop quando recebe False
-client = ''     # variavel de conexão
-reconn = ''     # variavel de reconexão
+play = True             # pausa a execução do loop quando recebe False
+client = ''             # variavel de conexão
+reconn = False          # variavel de reconexão
+label_loading = True    # variavel status label de reconexão

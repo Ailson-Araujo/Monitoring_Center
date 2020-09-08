@@ -194,6 +194,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
     # Inicia a solicitação ao servidor
     def play_stop(self):
         
+        #c_thread.label_loading = False
         if self.btn_run.isChecked():
             c_thread.play = True
             self.loop_request = c_thread.LoopRequest(2)
@@ -202,14 +203,23 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.loop_request.error.connect(self.reconn) # Chama reconn se houver erro de conexão
             self.loop_request.start()
 
+        # Interrompe a solicitação ao servidor
         else:          
             c_thread.play = False
 
     # Tenta a reconexão com o servidor     
     def reconn(self):
+
+        # Define o status de reconexão na label status
+        c_thread.label_loading = True
+        self.loading = c_thread.Loading('°', 3, 0.3)
+        self.loading.msg.connect(self.msg_status)
+        self.loading.button.connect(self.disable_button)
+        self.loading.start()
+
+        # Inicia a tentativa de reconexão
         self.reconn_server = c_thread.ReConn(ip, porta, 3, 10)
         self.reconn_server.msg.connect(self.msg_status)
-        self.reconn_server.button.connect(self.disable_button)
         self.reconn_server.re_conn.connect(self.play_stop)  # Chama play_stop se reconexão estabelecida
         self.reconn_server.start()
 
