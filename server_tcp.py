@@ -1,5 +1,6 @@
 import socket
 import _thread
+from random import seed, randint
 
 num_client = 0
 def conn_server():
@@ -27,6 +28,7 @@ def conn_server():
 def receive_client(conn, client):
 
     print ('conectado a: ', client)
+    seed(1)
     global num_client
     msg = ''
     while True:
@@ -39,11 +41,15 @@ def receive_client(conn, client):
                 print (client, ' Desconectado!')
                 conn.close()
                 return
-
+            
             msg = msg + char
             #print ('concatenação: ', msg)
             #print ('ultima: ', msg[-1::])
             if msg[-1::]== '\r' or msg[-1::] == '\n':
+                
+                temp = randint(0, 100)
+                humd = randint(0, 100)
+                msg = str(temp) + ' ' + str(humd)
                 _thread.start_new_thread(send_client, (conn, msg))
                 msg = ''
         except:
@@ -55,9 +61,10 @@ def receive_client(conn, client):
 def send_client(conn, msg):
     global num_client
     try:
-        print('Recebido: ', msg)
+        print('Dados: ', msg)
         msg = msg + '\n'
-        conn.send(msg.upper().encode('utf-8'))
+        #conn.send(msg.upper().encode('utf-8'))
+        conn.send(msg.encode('utf-8'))
     except:
         num_client -= 1
         print (' Desconectado!')
