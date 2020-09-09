@@ -93,10 +93,10 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.pause.signal.connect(lambda:self.msg_status(0, msg, color))
             self.pause.start()
             
-
-    def loop(self, value):
-        c_progressbar.SetValueProgressBar(0, value, self.labelTemperatura, self.ProgressTemperatura)
-        c_progressbar.SetValueProgressBar(1, value, self.labelHumidade, self.ProgressHumidade)
+    # Define os valores dos sensores no gauge
+    def set_gauge(self, value_temp, value_humd):
+        c_progressbar.SetValueProgressBar(0, value_temp, self.labelTemperatura, self.ProgressTemperatura)
+        c_progressbar.SetValueProgressBar(1, value_humd, self.labelHumidade, self.ProgressHumidade)
 
     # Exibe a pagina selecionada do stackeWidget
     def select_page(self, button):
@@ -201,6 +201,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.loop_request.msg.connect(self.msg_status)
             self.loop_request.button.connect(self.disable_button)
             self.loop_request.error.connect(self.reconn) # Chama reconn se houver erro de conexão
+            self.loop_request.gauge.connect(self.set_gauge)
             self.loop_request.start()
 
         # Interrompe a solicitação ao servidor
@@ -235,5 +236,6 @@ if __name__=='__main__':
     # encerra a aplicação
     sys.exit(app.exec_())
 
+# Variaveis Globais
 ip = ''
 porta = ''

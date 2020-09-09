@@ -33,6 +33,7 @@ class LoopRequest(QThread):
     '''interval: intervalo de tempo em segundos para as solicitações'''
     
     error = pyqtSignal()                    # retorna sinal de erro
+    gauge = pyqtSignal(int, int)            # retorna sinal com valores dos sensores
     msg = pyqtSignal(int, str, str)         # retorna sinal com parametros para mensagem de status
     button = pyqtSignal(bool, bool, bool)   # retorna sinal com parametros para habilitar e desabilitar buttons 
 
@@ -60,7 +61,8 @@ class LoopRequest(QThread):
             else:
                 # Recebe resposta do servidor
                 msg_server = client.recv(2048).decode('utf-8')
-                print (msg_server)
+                value_sensors = msg_server.split(' ')
+                self.gauge.emit(int(value_sensors[0]), int(value_sensors[1][:-1]))
                 time.sleep(self.interval)
 
                 # Interrompe o loop 
