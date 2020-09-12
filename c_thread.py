@@ -193,6 +193,32 @@ class Loading(QThread):
             self.msg.emit(3, 'Desconectado', 'red')
             self.button.emit(0,1,1)
 
+# Efeito de inicialização do gauge
+class BootEffect(QThread):
+    '''Efeito de inicialização do gauge'''
+
+    value_gauge = pyqtSignal(int, int)      # retorna sinal com parametros para o gauge
+    msg = pyqtSignal(int, str, str)         # retorna sinal com parametros para mensagem de status
+
+    def __init__(self, interval):
+        super(BootEffect, self).__init__()
+        self.interval = interval
+
+    def run(self):
+        time.sleep(0.4)
+        value = 0
+        while (value < 100):
+            value += 1
+            time.sleep(self.interval)
+            self.value_gauge.emit(value, value)
+
+        while (value > 0):
+            value -= 1
+            time.sleep(self.interval)
+            self.value_gauge.emit(value, value)
+
+        self.msg.emit(0, 'Desconectado', 'red')
+
 # Variaveis Global
 play = True             # pausa a execução do loop quando recebe False
 client = ''             # variavel de conexão

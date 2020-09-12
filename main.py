@@ -37,9 +37,11 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         #Inicialização
         self.disable_button(0,1,1)
         self.btn_monitor.setChecked(True)
-        self.label_page.setText("Monitor")
+        self.label_title.setText("Monitor")
+        self.msg_status(0, 'Inicializando', 'blue')
         c_progressbar.SetValueProgressBar(0, 0, self.labelTemperatura, self.ProgressTemperatura)
         c_progressbar.SetValueProgressBar(1, 0, self.labelHumidade, self.ProgressHumidade)
+        self.init_gauge()
 
         # Paginas
         self.btn_monitor.clicked.connect(lambda:self.select_page(self.btn_monitor))
@@ -110,13 +112,13 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         #Exibe a pagina
         if button == self.btn_monitor:
             self.stackedWidget.setCurrentIndex(0)
-            self.label_page.setText("Monitor")
+            self.label_title.setText("Monitor")
         if button == self.btn_grafico:
             self.stackedWidget.setCurrentIndex(1)
-            self.label_page.setText("Gráfico")
+            self.label_title.setText("Gráfico")
         if button == self.btn_setting:
             self.stackedWidget.setCurrentIndex(2)
-            self.label_page.setText("Configurações")
+            self.label_title.setText("Configurações")
 
     # Alterna a largura do menu
     def Menu(self, maxWidth, enable):
@@ -223,6 +225,12 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.reconn_server.msg.connect(self.msg_status)
         self.reconn_server.re_conn.connect(self.play_stop)  # Chama play_stop se reconexão estabelecida
         self.reconn_server.start()
+
+    def init_gauge(self):
+        self.boot = c_thread.BootEffect(0.005)
+        self.boot.value_gauge.connect(self.set_gauge)
+        self.boot.msg.connect(self.msg_status)
+        self.boot.start()
 
 
 if __name__=='__main__':
