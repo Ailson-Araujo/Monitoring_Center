@@ -35,56 +35,6 @@ class Ui_central(object):
 "padding-left: 8px;")
         self.label_version.setObjectName("label_version")
         self.gridLayout.addWidget(self.label_version, 3, 3, 1, 1)
-        self.gridLayout_3 = QtWidgets.QGridLayout()
-        self.gridLayout_3.setSpacing(0)
-        self.gridLayout_3.setObjectName("gridLayout_3")
-        self.btn_menu = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_menu.sizePolicy().hasHeightForWidth())
-        self.btn_menu.setSizePolicy(sizePolicy)
-        self.btn_menu.setMinimumSize(QtCore.QSize(60, 50))
-        self.btn_menu.setMaximumSize(QtCore.QSize(60, 50))
-        self.btn_menu.setStyleSheet("QPushButton {\n"
-"    background-image: url(:icons/icons/cil-menu.png);\n"
-"    background-position: center;\n"
-"    background-repeat: no-reperat;\n"
-"    border: 0px solid;\n"
-"    background-color: rgb(27, 29, 35);\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(33, 37, 43);\n"
-"}\n"
-"QPushButton:pressed {    \n"
-"    background-color: rgb(85, 170, 255);\n"
-"}")
-        self.btn_menu.setText("")
-        self.btn_menu.setObjectName("btn_menu")
-        self.gridLayout_3.addWidget(self.btn_menu, 0, 0, 1, 1)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setSpacing(0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.label_title = QtWidgets.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
-        font.setPointSize(14)
-        font.setBold(True)
-        font.setItalic(False)
-        font.setUnderline(False)
-        font.setWeight(75)
-        font.setStrikeOut(False)
-        font.setKerning(False)
-        self.label_title.setFont(font)
-        self.label_title.setStyleSheet("background-color: rgb(27, 29, 35);\n"
-"border: none;\n"
-"color: rgb(210, 210, 210);\n"
-"padding-top:3px;")
-        self.label_title.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_title.setObjectName("label_title")
-        self.verticalLayout_2.addWidget(self.label_title)
-        self.gridLayout_3.addLayout(self.verticalLayout_2, 0, 1, 1, 1)
-        self.gridLayout.addLayout(self.gridLayout_3, 0, 0, 1, 4)
         self.label_register = QtWidgets.QLabel(self.centralwidget)
         self.label_register.setMinimumSize(QtCore.QSize(0, 25))
         self.label_register.setMaximumSize(QtCore.QSize(16777215, 25))
@@ -533,6 +483,8 @@ class Ui_central(object):
         self.frame_status.setObjectName("frame_status")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.frame_status)
         self.gridLayout_5.setObjectName("gridLayout_5")
+        spacerItem6 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem6, 2, 1, 1, 1)
         self.labelBoxBlenderInstalation_2 = QtWidgets.QLabel(self.frame_status)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -564,8 +516,6 @@ class Ui_central(object):
         self.label_status.setAlignment(QtCore.Qt.AlignCenter)
         self.label_status.setObjectName("label_status")
         self.gridLayout_5.addWidget(self.label_status, 1, 1, 1, 1)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem6, 2, 1, 1, 1)
         self.horizontalLayout.addWidget(self.frame_status)
         self.gridLayout_6.addLayout(self.horizontalLayout, 0, 0, 1, 5)
         self.gridLayout_4 = QtWidgets.QGridLayout()
@@ -605,11 +555,68 @@ class Ui_central(object):
         self.page_grafico = QtWidgets.QWidget()
         self.page_grafico.setStyleSheet("")
         self.page_grafico.setObjectName("page_grafico")
+        self.gridLayout_7 = QtWidgets.QGridLayout(self.page_grafico)
+        self.gridLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_7.setSpacing(0)
+        self.gridLayout_7.setObjectName("gridLayout_7")
+        self.MplWidget = MplWidget(self.page_grafico)
+        self.MplWidget.setObjectName("MplWidget")
+        self.gridLayout_7.addWidget(self.MplWidget, 0, 0, 1, 1)
         self.stackedWidget.addWidget(self.page_grafico)
         self.page_setting = QtWidgets.QWidget()
         self.page_setting.setObjectName("page_setting")
         self.stackedWidget.addWidget(self.page_setting)
         self.gridLayout.addWidget(self.stackedWidget, 1, 1, 2, 3)
+        self.gridLayout_3 = QtWidgets.QGridLayout()
+        self.gridLayout_3.setSpacing(0)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.btn_menu = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btn_menu.sizePolicy().hasHeightForWidth())
+        self.btn_menu.setSizePolicy(sizePolicy)
+        self.btn_menu.setMinimumSize(QtCore.QSize(60, 50))
+        self.btn_menu.setMaximumSize(QtCore.QSize(60, 50))
+        self.btn_menu.setStyleSheet("QPushButton {\n"
+"    background-image: url(:icons/icons/cil-menu.png);\n"
+"    background-position: center;\n"
+"    background-repeat: no-reperat;\n"
+"    border: 0px solid;\n"
+"    background-color: rgb(27, 29, 35);\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: rgb(33, 37, 43);\n"
+"}\n"
+"QPushButton:pressed {    \n"
+"    background-color: rgb(85, 170, 255);\n"
+"}")
+        self.btn_menu.setText("")
+        self.btn_menu.setObjectName("btn_menu")
+        self.gridLayout_3.addWidget(self.btn_menu, 0, 0, 1, 1)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label_title = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setUnderline(False)
+        font.setWeight(75)
+        font.setStrikeOut(False)
+        font.setKerning(False)
+        self.label_title.setFont(font)
+        self.label_title.setStyleSheet("background-color: rgb(27, 29, 35);\n"
+"border: none;\n"
+"color: rgb(210, 210, 210);\n"
+"padding-top:3px;")
+        self.label_title.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_title.setObjectName("label_title")
+        self.verticalLayout_2.addWidget(self.label_title)
+        self.gridLayout_3.addLayout(self.verticalLayout_2, 0, 1, 1, 1)
+        self.gridLayout.addLayout(self.gridLayout_3, 0, 0, 1, 4)
         central.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(central)
@@ -628,7 +635,6 @@ class Ui_central(object):
         _translate = QtCore.QCoreApplication.translate
         central.setWindowTitle(_translate("central", "Central de Monitoramento"))
         self.label_version.setText(_translate("central", "Versão 1.0.0"))
-        self.label_title.setText(_translate("central", "Central de Monitoramento"))
         self.label_register.setText(_translate("central", "<html><head/><body><p>Desenvolvimento:<span style=\" font-weight:600;\"> Ailson Araujo</span></p></body></html>"))
         self.btn_monitor.setText(_translate("central", "Monitor"))
         self.btn_grafico.setText(_translate("central", "Gráfico"))
@@ -645,4 +651,6 @@ class Ui_central(object):
         self.lineEdit_Porta.setPlaceholderText(_translate("central", "Porta"))
         self.lineEdit_IP.setPlaceholderText(_translate("central", "Endereço IP"))
         self.labelBoxBlenderInstalation_2.setText(_translate("central", "STATUS"))
+        self.label_title.setText(_translate("central", "Central de Monitoramento"))
+from c_mplwidget import MplWidget
 import UI_resource_rc

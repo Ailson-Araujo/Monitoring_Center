@@ -1,33 +1,32 @@
 ########################################################################
 ## MIT License
-## Copyright © 2020, Ailson Software Development
+## Copyright © 2020, Ailson Araujo.
 ##
 ## Autor: Ailson Araujo
 ## Versão: 1.0.0
-## Data: 29/08/2020
+## Iniciado: 29/08/2020
+## Finalizado:
 ##
 ## Este projeto pode ser usado livremente, desde que mantenham
 ## os respectivos créditos apenas nos scripts Python.
-##
+## Projeto feito com Qt Designer e PyQt5
 ## PROGRESSEBAR DESIGNER BY: WANDERSON M.PIMENTA
 ########################################################################
 
 
 import sys
 import os
-import time
+import c_progressbar
+import c_thread
 import socket
-
+import UI_resource_rc
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import QPropertyAnimation, QThreadPool
 from ui_main import Ui_central
-import UI_resource_rc
+from c_mplwidget import MplWidget
 
-import c_progressbar
-import c_thread
-
-
+import random
 
 class Central(QtWidgets.QMainWindow, Ui_central):
 
@@ -42,6 +41,18 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         c_progressbar.SetValueProgressBar(0, 0, self.labelTemperatura, self.ProgressTemperatura)
         c_progressbar.SetValueProgressBar(1, 0, self.labelHumidade, self.ProgressHumidade)
         self.init_gauge()
+        self._plot_ref = None
+        self.xdata = list(range(60))
+        self.ytemp = [0 for i in range(60)]
+        self.yhumd = [0 for i in range(60)]
+        self.MplWidget.axes.tick_params(labelcolor = '#f0f0f0')
+        self.MplWidget.axes.set_facecolor('#282c34')
+        self.MplWidget.axes.tick_params(color = '#282c34')
+        self.MplWidget.axes.tick_params(labelbottom = False)
+        self.MplWidget.axes.spines['top'].set_color('#1b1d23')
+        self.MplWidget.axes.spines['right'].set_color('#1b1d23')
+        self.MplWidget.axes.spines['bottom'].set_color('#1b1d23')
+        self.MplWidget.axes.spines['left'].set_color('#1b1d23')
 
         # Paginas
         self.btn_monitor.clicked.connect(lambda:self.select_page(self.btn_monitor))
@@ -52,17 +63,9 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.btn_menu.clicked.connect(lambda: self.Menu(190, True))
         self.btn_connect.clicked.connect(self.validation)
         self.btn_run.clicked.connect(self.play_stop)
-        #self.request()
 
-        # self.bt_on.setDisabled(True)
-        # self.bt_off.setDisabled(True)
-        #self.bt_conn.setVisible(False)
-        # self.bt_conn.clicked.connect(lambda:self.conn(True))
-        # self.bt_on.clicked.connect(lambda:self.comand('on'))
-        # self.bt_off.clicked.connect(self.request)
-        #self.bt_off.clicked.connect(lambda:self.comand('fire'))
-        #self.bt_on.clicked.connect(self.on)
-        #self.bt_off.clicked.connect(self.off)
+        # self.MplWidget.axes.plot([10,1,20,3,40])
+        # self.MplWidget.canvas.draw()
 
     # Desabilita Botões
     def disable_button(self, conn, save, run):
@@ -94,7 +97,16 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.pause = c_thread.Pause(segundos)
             self.pause.signal.connect(lambda:self.msg_status(0, msg, color))
             self.pause.start()
-            
+
+    def update_plot(self, temp, humd):
+        
+        self.ytemp = self.ytemp[1:] + [temp]
+        self.yhumd = self.yhumd[1:] + [humd]
+        self.MplWidget.axes.cla()
+        self.MplWidget.axes.plot(self.xdata, self.ytemp, self.xdata, self.yhumd)
+        
+        self.MplWidget.canvas.draw()
+
     # Define os valores dos sensores no gauge
     def set_gauge(self, value_temp, value_humd):
         c_progressbar.SetValueProgressBar(0, value_temp, self.labelTemperatura, self.ProgressTemperatura)
@@ -204,6 +216,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.loop_request.button.connect(self.disable_button)
             self.loop_request.error.connect(self.reconn) # Chama reconn se houver erro de conexão
             self.loop_request.gauge.connect(self.set_gauge)
+            self.loop_request.gauge.connect(self.update_plot)
             self.loop_request.start()
 
         # Interrompe a solicitação ao servidor
@@ -226,6 +239,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.reconn_server.re_conn.connect(self.play_stop)  # Chama play_stop se reconexão estabelecida
         self.reconn_server.start()
 
+    # Inicialização do efeito
     def init_gauge(self):
         self.boot = c_thread.BootEffect(0.005)
         self.boot.value_gauge.connect(self.set_gauge)
