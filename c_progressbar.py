@@ -1,14 +1,15 @@
 ########################################################################
 ## MIT License
-## Copyright © 2020, Ailson Software Development
+## Copyright © 2020, Ailson Araujo.
 ##
 ## Autor: Ailson Araujo
 ## Versão: 1.0.0
-## Data: 29/08/2020
+## Iniciado: 29/08/2020
+## Finalizado:
 ##
 ## Este projeto pode ser usado livremente, desde que mantenham
 ## os respectivos créditos apenas nos scripts Python.
-##
+## Projeto feito com Qt Designer e PyQt5
 ########################################################################
 
 # define o valor na barra de progresso
