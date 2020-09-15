@@ -13,6 +13,7 @@
 ########################################################################
 import time
 import socket
+from datetime import datetime
 from PyQt5.QtCore import QThread, pyqtSignal
 
 # Pausa paralela
@@ -35,6 +36,7 @@ class LoopRequest(QThread):
     
     error = pyqtSignal()                    # retorna sinal de erro
     gauge = pyqtSignal(int, int)            # retorna sinal com valores dos sensores
+    plot = pyqtSignal(int, int, str)      # retorna sinal com valores para plotagem
     msg = pyqtSignal(int, str, str)         # retorna sinal com parametros para mensagem de status
     button = pyqtSignal(bool, bool, bool)   # retorna sinal com parametros para habilitar e desabilitar buttons 
 
@@ -62,8 +64,11 @@ class LoopRequest(QThread):
             else:
                 # Recebe resposta do servidor
                 msg_server = client.recv(2048).decode('utf-8')
+                data_hora = datetime.now()
+                data_hora =data_hora.strftime("%H:%M:%S")
                 value_sensors = msg_server.split(' ')
                 self.gauge.emit(int(value_sensors[0]), int(value_sensors[1][:-1]))
+                self.plot.emit(int(value_sensors[0]), int(value_sensors[1][:-1]), data_hora)
                 time.sleep(self.interval)
 
                 # Interrompe o loop 

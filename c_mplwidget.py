@@ -15,14 +15,17 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from matplotlib.figure import Figure
+from matplotlib.pyplot import Figure
 
 class MplWidget(QWidget):
 
     def __init__(self, parent = None):
         QWidget.__init__(self, parent)
 
-        self.canvas = FigureCanvasQTAgg(Figure(figsize = (10, 10), dpi= 100, facecolor='#282c34'))
+        self.canvas = FigureCanvasQTAgg(Figure(figsize = (10, 10),
+                                               dpi= 100,
+                                               facecolor='#282c34',
+                                               tight_layout=True))
         vertical_layout = QHBoxLayout()
         vertical_layout.addWidget(self.canvas)
 

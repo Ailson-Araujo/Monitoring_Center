@@ -41,18 +41,12 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         c_progressbar.SetValueProgressBar(0, 0, self.labelTemperatura, self.ProgressTemperatura)
         c_progressbar.SetValueProgressBar(1, 0, self.labelHumidade, self.ProgressHumidade)
         self.init_gauge()
+        self.init_plot()
         self._plot_ref = None
-        self.xdata = list(range(60))
-        self.ytemp = [0 for i in range(60)]
-        self.yhumd = [0 for i in range(60)]
-        self.MplWidget.axes.tick_params(labelcolor = '#f0f0f0')
-        self.MplWidget.axes.set_facecolor('#282c34')
-        self.MplWidget.axes.tick_params(color = '#282c34')
-        self.MplWidget.axes.tick_params(labelbottom = False)
-        self.MplWidget.axes.spines['top'].set_color('#1b1d23')
-        self.MplWidget.axes.spines['right'].set_color('#1b1d23')
-        self.MplWidget.axes.spines['bottom'].set_color('#1b1d23')
-        self.MplWidget.axes.spines['left'].set_color('#1b1d23')
+        self.xdata = list(range(10))
+        self.ytemp = [0 for i in range(10)]
+        self.yhumd = [0 for i in range(10)]
+        
 
         # Paginas
         self.btn_monitor.clicked.connect(lambda:self.select_page(self.btn_monitor))
@@ -97,15 +91,6 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.pause = c_thread.Pause(segundos)
             self.pause.signal.connect(lambda:self.msg_status(0, msg, color))
             self.pause.start()
-
-    def update_plot(self, temp, humd):
-        
-        self.ytemp = self.ytemp[1:] + [temp]
-        self.yhumd = self.yhumd[1:] + [humd]
-        self.MplWidget.axes.cla()
-        self.MplWidget.axes.plot(self.xdata, self.ytemp, self.xdata, self.yhumd)
-        
-        self.MplWidget.canvas.draw()
 
     # Define os valores dos sensores no gauge
     def set_gauge(self, value_temp, value_humd):
@@ -211,12 +196,12 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         #c_thread.label_loading = False
         if self.btn_run.isChecked():
             c_thread.play = True
-            self.loop_request = c_thread.LoopRequest(2)
+            self.loop_request = c_thread.LoopRequest(5)
             self.loop_request.msg.connect(self.msg_status)
             self.loop_request.button.connect(self.disable_button)
             self.loop_request.error.connect(self.reconn) # Chama reconn se houver erro de conexão
             self.loop_request.gauge.connect(self.set_gauge)
-            self.loop_request.gauge.connect(self.update_plot)
+            self.loop_request.plot.connect(self.update_plot)
             self.loop_request.start()
 
         # Interrompe a solicitação ao servidor
@@ -246,6 +231,49 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.boot.msg.connect(self.msg_status)
         self.boot.start()
 
+    def init_plot(self):
+
+        self.MplWidget.axes.tick_params(labelcolor = '#f0f0f0')
+        self.MplWidget.axes.set_facecolor('#282c34')
+        self.MplWidget.axes.tick_params(color = '#282c34')
+        #self.MplWidget.axes.tick_params(labelbottom = False)
+        self.MplWidget.axes.spines['top'].set_color('#1b1d23')
+        self.MplWidget.axes.spines['right'].set_color('#1b1d23')
+        self.MplWidget.axes.spines['bottom'].set_color('#1b1d23')
+        self.MplWidget.axes.spines['left'].set_color('#1b1d23')
+
+        # self.MplWidget.axes.set_xlabel('Horario da Leitura', fontfamily='Segoe UI', fontsize=11, color='#f0f0f0', fontweight='bold')
+        # self.MplWidget.axes.set_ylabel('Temperatura / Humidade',fontfamily='Segoe UI', fontsize=11, color='#f0f0f0', fontweight='bold')
+        # self.MplWidget.axes.grid(color = '#505050', linestyle='--')
+        
+
+    def update_plot(self, temp, humd, date_hora):
+        
+        self.ytemp = self.ytemp[1:] + [temp]
+        self.yhumd = self.yhumd[1:] + [humd]
+        self.xdata = self.xdata[1:] + [date_hora]
+
+        self.MplWidget.axes.cla()
+        for label in self.MplWidget.axes.get_xticklabels():
+            label.set_rotation(30)
+            label.set_horizontalalignment('right')
+
+        self.MplWidget.axes.plot(self.xdata, self.ytemp,
+                                 color = '#52BC56',
+                                 marker = 'o',
+                                 label = 'Temperatura')
+
+        self.MplWidget.axes.plot(self.xdata, self.yhumd,
+                                 color = '#73B9FF',
+                                 marker = 'o',
+                                 label = 'Humidade')
+
+        self.MplWidget.axes.set_xlabel('Horario da Leitura', fontfamily='Segoe UI', fontsize=11, color='#f0f0f0', fontweight='bold')
+        self.MplWidget.axes.set_ylabel('Temperatura / Humidade',fontfamily='Segoe UI', fontsize=11, color='#f0f0f0', fontweight='bold')
+        self.MplWidget.axes.grid(color = '#505050', linestyle='--')
+        
+        self.MplWidget.axes.legend(loc='upper rigth', frameon=True, framealpha= 0.1)
+        self.MplWidget.canvas.draw()
 
 if __name__=='__main__':
 
