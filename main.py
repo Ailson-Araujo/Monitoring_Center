@@ -31,8 +31,9 @@ import c_thread
 import socket
 import UI_resource_rc
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import QPropertyAnimation, QThreadPool
+from PyQt5.QtWidgets import QMessageBox, QColorDialog
+from PyQt5.QtCore import QPropertyAnimation, QThreadPool, QSettings
+from PyQt5.QtGui import QColor
 from ui_main import Ui_central
 from c_mplwidget import MplWidget
 
@@ -43,7 +44,13 @@ class Central(QtWidgets.QMainWindow, Ui_central):
     def __init__(self, *args, obj=None, **kwargs):
         super(Central, self).__init__(*args, **kwargs)
         self.setupUi(self)
+        #registro do Windows
+        self.setting = QSettings('Ailson Software Development', 'Monitoring Center')
+
         #Inicialização
+        self.validation_register()
+        self.charge_setting()
+        self.charge_position()
         self.disable_button(0,1,1)
         self.btn_monitor.setChecked(True)
         self.label_title.setText("Monitor")
@@ -67,9 +74,10 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.btn_menu.clicked.connect(lambda: self.Menu(190, True))
         self.btn_connect.clicked.connect(self.validation)
         self.btn_run.clicked.connect(self.play_stop)
+        self.btn_save_config.clicked.connect(self.save_setting)
+        self.btn_color_temp.clicked.connect(lambda: self.dialog_color(0))
+        self.btn_color_humd.clicked.connect(lambda: self.dialog_color(1))
 
-        # self.MplWidget.axes.plot([10,1,20,3,40])
-        # self.MplWidget.canvas.draw()
 
     # Desabilita Botões
     def disable_button(self, conn, save, run):
@@ -203,10 +211,9 @@ class Central(QtWidgets.QMainWindow, Ui_central):
     # Inicia a solicitação ao servidor
     def play_stop(self):
         
-        #c_thread.label_loading = False
         if self.btn_run.isChecked():
             c_thread.play = True
-            self.loop_request = c_thread.LoopRequest(5)
+            self.loop_request = c_thread.LoopRequest(self.setting.value('request'))
             self.loop_request.msg.connect(self.msg_status)
             self.loop_request.button.connect(self.disable_button)
             self.loop_request.error.connect(self.reconn) # Chama reconn se houver erro de conexão
@@ -229,7 +236,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.loading.start()
 
         # Inicia a tentativa de reconexão
-        self.reconn_server = c_thread.ReConn(ip, porta, 3, 10)
+        self.reconn_server = c_thread.ReConn(ip, porta, 3, self.setting.value('reconn'))
         self.reconn_server.msg.connect(self.msg_status)
         self.reconn_server.re_conn.connect(self.play_stop)  # Chama play_stop se reconexão estabelecida
         self.reconn_server.start()
@@ -241,6 +248,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.boot.msg.connect(self.msg_status)
         self.boot.start()
 
+    # Inicilaiza o gráfico
     def init_plot(self):
 
         self.MplWidget.axes.tick_params(labelcolor = '#f0f0f0')
@@ -256,7 +264,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         # self.MplWidget.axes.set_ylabel('Temperatura / Humidade',fontfamily='Segoe UI', fontsize=11, color='#f0f0f0', fontweight='bold')
         # self.MplWidget.axes.grid(color = '#505050', linestyle='--')
         
-
+    # Atualiza o gráfico
     def update_plot(self, temp, humd, date_hora):
         
         self.ytemp = self.ytemp[1:] + [temp]
@@ -269,12 +277,12 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             label.set_horizontalalignment('right')
 
         self.MplWidget.axes.plot(self.xdata, self.ytemp,
-                                 color = '#52BC56',
+                                 color = self.setting.value('color_temp'),
                                  marker = 'o',
                                  label = 'Temperatura')
 
         self.MplWidget.axes.plot(self.xdata, self.yhumd,
-                                 color = '#73B9FF',
+                                 color = self.setting.value('color_humd'),
                                  marker = 'o',
                                  label = 'Humidade')
 
@@ -282,8 +290,122 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.MplWidget.axes.set_ylabel('Temperatura / Humidade',fontfamily='Segoe UI', fontsize=11, color='#f0f0f0', fontweight='bold')
         self.MplWidget.axes.grid(color = '#505050', linestyle='--')
         
-        self.MplWidget.axes.legend(loc='upper rigth', frameon=True, framealpha= 0.1)
+        legend = self.MplWidget.axes.legend(loc='upper left', ncol=1, frameon=True, framealpha= 0.1)
+
+        # Subistitui as cores do texto da legenda
+        for text in legend.get_texts():
+            text.set_color('#f0f0f0')
+
         self.MplWidget.canvas.draw()
+
+    # salva informações quando aplicação é finalizada
+    def closeEvent(self, event):
+
+        # salva a posição e o tamanho do app ao ser finalizado
+        self.setting.setValue('size', self.size())
+        self.setting.setValue('position', self.pos())
+        self.setting.setValue('max', self.isMaximized())
+
+    # carrega as configurações de localização e tamanho do app
+    def charge_position(self):
+
+        try:
+            # caso a janela tenha sido maxmizada
+            if self.setting.value('max') == 'true':
+                self.resize(self.setting.value('size'))
+                self.move(self.setting.value('position'))
+                self.showMaximized()
+
+            # janela não foi maxmizada
+            else:
+                self.resize(self.setting.value('size'))
+                self.move(self.setting.value('position'))
+        except:
+            pass
+
+    # Valida os dados do registro caso não existam
+    def validation_register(self):       
+
+        # valores padrões
+        if self.setting.value('request') == None:
+            self.setting.setValue('request', 3)
+
+        if self.setting.value('reconn') == None:
+            self.setting.setValue('reconn', 3)
+
+        if self.setting.value('color_temp') == None:
+            self.setting.setValue('color_temp', '#52BC56')
+
+        if self.setting.value('color_humd') == None:
+            self.setting.setValue('color_humd', '#73B9FF')
+
+    # Carrega os dados da pagina configurações
+    def charge_setting(self):
+
+        self.spinBox_request.setValue(self.setting.value('request'))
+        self.spinBox_reconn.setValue(self.setting.value('reconn'))
+
+        # Dicionario
+        dic_color = {'BTN': [self.btn_color_temp,
+                             self.btn_color_humd],
+
+                     'COLOR': ['color_temp',
+                               'color_humd']}
+        
+        for index in range(2):
+            dic_color['BTN'][index].setStyleSheet("QPushButton {\n"
+                                                  "    border: 2px solid rgb(52, 59, 72);\n"
+                                                  "    border-radius: 5px;    \n"
+                                                  "    background-color: %s;\n"
+                                                  "    color: rgb(210, 210, 210);\n"
+                                                  "}\n"
+                                                  "QPushButton:hover {\n"
+                                                  "    border: 2px solid rgb(61, 70, 86);\n"
+                                                  "}\n"
+                                                  "QPushButton:pressed {\n"
+                                                  "    border: 2px solid rgb(43, 50, 61);\n"
+                                                  "}" %self.setting.value(dic_color['COLOR'][index]))
+
+    # Salva os dados de Configurações
+    def save_setting(self):
+
+        self.setting.setValue('request', (self.spinBox_request.value()))
+        self.setting.setValue('reconn', (self.spinBox_reconn.value()))
+
+    # abre a caixa de dialogo para escolha das cores
+    def dialog_color(self, button):
+        
+        # dicionario com as variaveis dos frames
+        # a variavel button recebe um inteiro que fará referência ao botão clicado
+        dic_color = {'BTN': [self.btn_color_temp,
+                             self.btn_color_humd],
+
+                     'COLOR': ['color_temp',
+                               'color_humd'],
+
+                     'TITLE': ['Selecionar cor da Temperatura',
+                               'Selecionar cor da Humidade']}
+        
+        #recebe a cor selecionada
+        selected_color = QColorDialog.getColor(initial = QtGui.QColor(self.setting.value(dic_color['COLOR'][button])), 
+                                               title = dic_color['TITLE'][button])
+
+        if selected_color.isValid():
+            dic_color['BTN'][button].setStyleSheet("QPushButton {\n"
+                                                   "    border: 2px solid rgb(52, 59, 72);\n"
+                                                   "    border-radius: 5px;    \n"
+                                                   "    background-color: %s;\n"
+                                                   "    color: rgb(210, 210, 210);\n"
+                                                   "}\n"
+                                                   "QPushButton:hover {\n"
+                                                   "    border: 2px solid rgb(61, 70, 86);\n"
+                                                   "}\n"
+                                                   "QPushButton:pressed {\n"
+                                                   "    border: 2px solid rgb(43, 50, 61);\n"
+                                                   "}" %selected_color.name())
+
+            # Salva a cor no registro
+            self.setting.setValue(dic_color['COLOR'][button], selected_color.name())
 
 if __name__=='__main__':
 
