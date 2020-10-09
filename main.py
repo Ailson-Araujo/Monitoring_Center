@@ -26,17 +26,16 @@
 
 import sys
 import os
-import c_progressbar
-import c_thread
 import socket
 import UI_resource_rc
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from PyQt5.QtWidgets import QMessageBox, QColorDialog
 from PyQt5.QtCore import QPropertyAnimation, QThreadPool, QSettings
 from PyQt5.QtGui import QColor
-from ui_main import Ui_central
+from Interface.ui_main import Ui_central
+from modulos import c_progressbar
+from modulos import c_thread
 from c_mplwidget import MplWidget
-
 import random
 
 class Central(QtWidgets.QMainWindow, Ui_central):
