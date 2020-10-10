@@ -33,6 +33,7 @@ from PyQt5.QtWidgets import QMessageBox, QColorDialog
 from PyQt5.QtCore import QPropertyAnimation, QThreadPool, QSettings
 from PyQt5.QtGui import QColor
 from Interface.ui_main import Ui_central
+from Interface.ui_msgbox import Ui_MsgDialog
 from modulos import c_progressbar
 from modulos import c_thread
 from c_mplwidget import MplWidget
@@ -58,12 +59,7 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         c_progressbar.SetValueProgressBar(1, 0, self.labelHumidade, self.ProgressHumidade)
         self.init_gauge()
         self.init_plot()
-        self._plot_ref = None
-        self.xdata = list(range(10))
-        self.ytemp = [0 for i in range(10)]
-        self.yhumd = [0 for i in range(10)]
         
-
         # Paginas
         self.btn_monitor.clicked.connect(lambda:self.select_page(self.btn_monitor))
         self.btn_grafico.clicked.connect(lambda:self.select_page(self.btn_grafico))
@@ -71,12 +67,18 @@ class Central(QtWidgets.QMainWindow, Ui_central):
 
         # Ações
         self.btn_menu.clicked.connect(lambda: self.Menu(190, True))
+        self.btn_save.clicked.connect(self.save_dados)
         self.btn_connect.clicked.connect(self.validation)
         self.btn_run.clicked.connect(self.play_stop)
         self.btn_save_config.clicked.connect(self.save_setting)
         self.btn_color_temp.clicked.connect(lambda: self.dialog_color(0))
         self.btn_color_humd.clicked.connect(lambda: self.dialog_color(1))
 
+    # Salva dados de conexão
+    def save_dados(self):
+        self.setting.setValue('IP', self.lineEdit_IP.text())
+        self.setting.setValue('PORTA', self.lineEdit_Porta.text())
+        MsgBox('', 'Dados de conexão salvos com sucesso!', 1).exec()
 
     # Desabilita Botões
     def disable_button(self, conn, save, run):
@@ -215,7 +217,12 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             self.loop_request = c_thread.LoopRequest(self.setting.value('request'))
             self.loop_request.msg.connect(self.msg_status)
             self.loop_request.button.connect(self.disable_button)
-            self.loop_request.error.connect(self.reconn) # Chama reconn se houver erro de conexão
+
+            # Chama reconn se houver erro de conexão
+            self.loop_request.error.connect(self.reconn)
+
+            # Seleciona a pagina monitor se houver erro de conexão
+            self.loop_request.error.connect(lambda: self.select_page(self.btn_monitor))
             self.loop_request.gauge.connect(self.set_gauge)
             self.loop_request.plot.connect(self.update_plot)
             self.loop_request.start()
@@ -249,6 +256,10 @@ class Central(QtWidgets.QMainWindow, Ui_central):
 
     # Inicilaiza o gráfico
     def init_plot(self):
+
+        self.xdata = list(range(self.setting.value('G_amostra')))
+        self.ytemp = [0 for i in range(self.setting.value('G_amostra'))]
+        self.yhumd = [0 for i in range(self.setting.value('G_amostra'))]
 
         self.MplWidget.axes.tick_params(labelcolor = '#f0f0f0')
         self.MplWidget.axes.set_facecolor('#282c34')
@@ -290,6 +301,11 @@ class Central(QtWidgets.QMainWindow, Ui_central):
         self.MplWidget.axes.grid(color = '#505050', linestyle='--')
         
         legend = self.MplWidget.axes.legend(loc='upper left', ncol=1, frameon=True, framealpha= 0.1)
+        
+        # Escala automatica
+        if not self.checkBox_escala.isChecked():
+            self.MplWidget.axes.set_yticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+            self.MplWidget.axes.set_ylim(-5, 105)
 
         # Subistitui as cores do texto da legenda
         for text in legend.get_texts():
@@ -337,12 +353,22 @@ class Central(QtWidgets.QMainWindow, Ui_central):
 
         if self.setting.value('color_humd') == None:
             self.setting.setValue('color_humd', '#73B9FF')
+        
+        if self.setting.value('G_amostra') == None:
+            self.setting.setValue('G_amostra', 10)
+        
+        if self.setting.value('auto_escala') == None:
+            self.setting.setValue('auto_escala', 0)
 
     # Carrega os dados da pagina configurações
     def charge_setting(self):
 
+        self.lineEdit_IP.setText(self.setting.value('IP'))
+        self.lineEdit_Porta.setText(self.setting.value('PORTA'))
         self.spinBox_request.setValue(self.setting.value('request'))
         self.spinBox_reconn.setValue(self.setting.value('reconn'))
+        self.spinBox_pontos.setValue(self.setting.value('G_amostra'))
+        self.checkBox_escala.setChecked(self.setting.value('auto_escala'))
 
         # Dicionario
         dic_color = {'BTN': [self.btn_color_temp,
@@ -367,11 +393,17 @@ class Central(QtWidgets.QMainWindow, Ui_central):
 
     # Salva os dados de Configurações
     def save_setting(self):
+        global retorno_msg
+        MsgBox('ATENÇÂO', 'Para que algumas alterações surtam efeito\né necessário reiniciar. Deseja continuar?', 2).exec()
+        if retorno_msg:
+            retorno_msg = ''
+            self.setting.setValue('request', self.spinBox_request.value())
+            self.setting.setValue('reconn', self.spinBox_reconn.value())
+            self.setting.setValue('G_amostra', self.spinBox_pontos.value())
+            self.setting.setValue('auto_escala', self.checkBox_escala.checkState())
+            self.restart()
 
-        self.setting.setValue('request', (self.spinBox_request.value()))
-        self.setting.setValue('reconn', (self.spinBox_reconn.value()))
-
-    # abre a caixa de dialogo para escolha das cores
+    # Abre a caixa de dialogo para escolha das cores
     def dialog_color(self, button):
         
         # dicionario com as variaveis dos frames
@@ -406,6 +438,41 @@ class Central(QtWidgets.QMainWindow, Ui_central):
             # Salva a cor no registro
             self.setting.setValue(dic_color['COLOR'][button], selected_color.name())
 
+    # Reinicia a Aplicação
+    def restart(self):
+        os.execl(sys.executable, sys.executable, *sys.argv)
+
+# Exibe Mensagens de avisos
+class MsgBox(QtWidgets.QDialog, Ui_MsgDialog):
+    '''Style = 1 apresenta apenas o botão OK
+       Style = 2 apresenta os dois botões'''
+
+    def __init__(self, title, msg, style, *args, obj=None, **kwargs):
+        super(MsgBox, self).__init__(*args, **kwargs)
+        self.setupUi(self)
+        self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
+        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+        self.style(style)
+        self.label_title.setText(title)
+        self.label_msg.setText(msg)
+        self.btn_ok.clicked.connect(self.ok)
+        self.btn_cancel.clicked.connect(self.cancel)
+    
+    def style(self, style):
+        if style == 1:
+            self.btn_cancel.setVisible(False)
+
+    def ok(self):
+        global retorno_msg
+        retorno_msg = True
+        self.close()
+
+    def cancel(self):
+        global retorno_msg
+        retorno_msg = False
+        self.close()
+
+        
 if __name__=='__main__':
 
     app = QtWidgets.QApplication(sys.argv)
@@ -420,3 +487,4 @@ if __name__=='__main__':
 # Variaveis Globais
 ip = ''
 porta = ''
+retorno_msg = ''
