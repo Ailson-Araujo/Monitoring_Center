@@ -1,1 +1,1 @@
-__all__ = ['ui_main.py']
+__all__ = ['ui_main.py', 'ui_msgbox.py']

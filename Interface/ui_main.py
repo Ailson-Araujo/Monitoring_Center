@@ -617,10 +617,8 @@ class Ui_central(object):
         self.page_setting.setObjectName("page_setting")
         self.gridLayout_12 = QtWidgets.QGridLayout(self.page_setting)
         self.gridLayout_12.setObjectName("gridLayout_12")
-        spacerItem8 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_12.addItem(spacerItem8, 2, 1, 1, 1)
-        spacerItem9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_12.addItem(spacerItem9, 3, 0, 1, 1)
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_12.addItem(spacerItem8, 5, 0, 1, 1)
         self.btn_save_config = QtWidgets.QPushButton(self.page_setting)
         self.btn_save_config.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -652,62 +650,19 @@ class Ui_central(object):
 "    color: rgb(40, 44, 52);\n"
 "}")
         self.btn_save_config.setObjectName("btn_save_config")
-        self.gridLayout_12.addWidget(self.btn_save_config, 3, 1, 1, 1)
+        self.gridLayout_12.addWidget(self.btn_save_config, 5, 2, 1, 1)
         self.frame_conection_4 = QtWidgets.QFrame(self.page_setting)
         self.frame_conection_4.setMinimumSize(QtCore.QSize(0, 0))
-        self.frame_conection_4.setMaximumSize(QtCore.QSize(16777215, 70))
+        self.frame_conection_4.setMaximumSize(QtCore.QSize(16777215, 120))
         self.frame_conection_4.setStyleSheet("background-color: rgba(33, 37, 43, 180);\n"
 "border-radius: 8px;    \n"
+"color: rgb(210, 210, 210);\n"
 "")
         self.frame_conection_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_conection_4.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_conection_4.setObjectName("frame_conection_4")
         self.gridLayout_10 = QtWidgets.QGridLayout(self.frame_conection_4)
         self.gridLayout_10.setObjectName("gridLayout_10")
-        self.btn_color_temp = QtWidgets.QPushButton(self.frame_conection_4)
-        self.btn_color_temp.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_color_temp.sizePolicy().hasHeightForWidth())
-        self.btn_color_temp.setSizePolicy(sizePolicy)
-        self.btn_color_temp.setMinimumSize(QtCore.QSize(100, 30))
-        self.btn_color_temp.setMaximumSize(QtCore.QSize(16777215, 30))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
-        font.setPointSize(8)
-        self.btn_color_temp.setFont(font)
-        self.btn_color_temp.setStyleSheet("QPushButton {\n"
-"    border: 2px solid rgb(52, 59, 72);\n"
-"    border-radius: 5px;    \n"
-"    background-color: rgb(52, 59, 72);\n"
-"    color: rgb(210, 210, 210);\n"
-"}\n"
-"QPushButton:hover {\n"
-"    border: 2px solid rgb(61, 70, 86);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    border: 2px solid rgb(43, 50, 61);\n"
-"}")
-        self.btn_color_temp.setObjectName("btn_color_temp")
-        self.gridLayout_10.addWidget(self.btn_color_temp, 2, 0, 1, 1)
-        self.labelBoxBlenderInstalation_5 = QtWidgets.QLabel(self.frame_conection_4)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labelBoxBlenderInstalation_5.sizePolicy().hasHeightForWidth())
-        self.labelBoxBlenderInstalation_5.setSizePolicy(sizePolicy)
-        self.labelBoxBlenderInstalation_5.setMaximumSize(QtCore.QSize(16777215, 17))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        self.labelBoxBlenderInstalation_5.setFont(font)
-        self.labelBoxBlenderInstalation_5.setStyleSheet("color: rgb(210, 210, 210);\n"
-"background-color: transparent;")
-        self.labelBoxBlenderInstalation_5.setObjectName("labelBoxBlenderInstalation_5")
-        self.gridLayout_10.addWidget(self.labelBoxBlenderInstalation_5, 0, 0, 1, 3)
         self.btn_color_humd = QtWidgets.QPushButton(self.frame_conection_4)
         self.btn_color_humd.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -735,7 +690,114 @@ class Ui_central(object):
 "}")
         self.btn_color_humd.setObjectName("btn_color_humd")
         self.gridLayout_10.addWidget(self.btn_color_humd, 2, 1, 1, 1)
-        self.gridLayout_12.addWidget(self.frame_conection_4, 1, 0, 1, 2)
+        self.spinBox_pontos = QtWidgets.QSpinBox(self.frame_conection_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.spinBox_pontos.sizePolicy().hasHeightForWidth())
+        self.spinBox_pontos.setSizePolicy(sizePolicy)
+        self.spinBox_pontos.setMinimumSize(QtCore.QSize(0, 25))
+        self.spinBox_pontos.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        self.spinBox_pontos.setFont(font)
+        self.spinBox_pontos.setStyleSheet("QSpinBox {\n"
+"    background-color: rgb(27, 29, 35);\n"
+"    border-radius: 5px;\n"
+"    border: 2px solid rgb(27, 29, 35);\n"
+"    padding-left: 10px;\n"
+"    color: rgb(110, 110, 110);\n"
+"}\n"
+"QSpinBox:hover {\n"
+"    border: 2px solid rgb(64, 71, 88);\n"
+"}\n"
+"QSpinBox:focus {\n"
+"    border: 2px solid rgb(91, 101, 124);\n"
+"}")
+        self.spinBox_pontos.setMinimum(5)
+        self.spinBox_pontos.setMaximum(50)
+        self.spinBox_pontos.setProperty("value", 10)
+        self.spinBox_pontos.setObjectName("spinBox_pontos")
+        self.gridLayout_10.addWidget(self.spinBox_pontos, 4, 0, 1, 1)
+        self.btn_color_temp = QtWidgets.QPushButton(self.frame_conection_4)
+        self.btn_color_temp.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btn_color_temp.sizePolicy().hasHeightForWidth())
+        self.btn_color_temp.setSizePolicy(sizePolicy)
+        self.btn_color_temp.setMinimumSize(QtCore.QSize(100, 30))
+        self.btn_color_temp.setMaximumSize(QtCore.QSize(16777215, 30))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(8)
+        self.btn_color_temp.setFont(font)
+        self.btn_color_temp.setStyleSheet("QPushButton {\n"
+"    border: 2px solid rgb(52, 59, 72);\n"
+"    border-radius: 5px;    \n"
+"    background-color: rgb(52, 59, 72);\n"
+"    color: rgb(210, 210, 210);\n"
+"}\n"
+"QPushButton:hover {\n"
+"    border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.btn_color_temp.setObjectName("btn_color_temp")
+        self.gridLayout_10.addWidget(self.btn_color_temp, 2, 0, 1, 1)
+        self.checkBox_escala = QtWidgets.QCheckBox(self.frame_conection_4)
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        self.checkBox_escala.setFont(font)
+        self.checkBox_escala.setStyleSheet("QCheckBox{\n"
+"    background-color: transparent;\n"
+"}\n"
+"QCheckBox::indicator {\n"
+"    color: rgb(210, 210, 210);\n"
+"    border: 3px solid rgb(52, 59, 72);\n"
+"    width: 15px;\n"
+"    height: 15px;\n"
+"    border-radius: 10px;\n"
+"    background: rgb(44, 49, 60);\n"
+"}\n"
+"QCheckBox::indicator:hover {\n"
+"    border: 3px solid rgb(58, 66, 81);\n"
+"}\n"
+"QCheckBox::indicator:checked {\n"
+"    background: 3px solid rgb(52, 59, 72);\n"
+"    border: 3px solid rgb(52, 59, 72);\n"
+"    background-color: rgb(85, 170, 255);\n"
+"}")
+        self.checkBox_escala.setObjectName("checkBox_escala")
+        self.gridLayout_10.addWidget(self.checkBox_escala, 4, 1, 1, 1)
+        self.labelBoxBlenderInstalation_5 = QtWidgets.QLabel(self.frame_conection_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelBoxBlenderInstalation_5.sizePolicy().hasHeightForWidth())
+        self.labelBoxBlenderInstalation_5.setSizePolicy(sizePolicy)
+        self.labelBoxBlenderInstalation_5.setMaximumSize(QtCore.QSize(16777215, 17))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(8)
+        font.setBold(True)
+        font.setWeight(75)
+        self.labelBoxBlenderInstalation_5.setFont(font)
+        self.labelBoxBlenderInstalation_5.setStyleSheet("color: rgb(210, 210, 210);\n"
+"background-color: transparent;")
+        self.labelBoxBlenderInstalation_5.setObjectName("labelBoxBlenderInstalation_5")
+        self.gridLayout_10.addWidget(self.labelBoxBlenderInstalation_5, 0, 0, 1, 3)
+        self.label = QtWidgets.QLabel(self.frame_conection_4)
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(8)
+        self.label.setFont(font)
+        self.label.setStyleSheet("background-color: transparent;")
+        self.label.setObjectName("label")
+        self.gridLayout_10.addWidget(self.label, 3, 0, 1, 1)
+        self.gridLayout_12.addWidget(self.frame_conection_4, 1, 0, 1, 3)
         self.gridLayout_11 = QtWidgets.QGridLayout()
         self.gridLayout_11.setObjectName("gridLayout_11")
         self.frame_conection_2 = QtWidgets.QFrame(self.page_setting)
@@ -859,7 +921,9 @@ class Ui_central(object):
         self.spinBox_reconn.setObjectName("spinBox_reconn")
         self.gridLayout_9.addWidget(self.spinBox_reconn, 1, 0, 1, 1)
         self.gridLayout_11.addWidget(self.frame_conection_3, 0, 1, 1, 1)
-        self.gridLayout_12.addLayout(self.gridLayout_11, 0, 0, 1, 2)
+        self.gridLayout_12.addLayout(self.gridLayout_11, 0, 0, 1, 3)
+        spacerItem9 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_12.addItem(spacerItem9, 3, 2, 1, 1)
         self.stackedWidget.addWidget(self.page_setting)
         self.gridLayout.addWidget(self.stackedWidget, 1, 1, 2, 3)
         central.setCentralWidget(self.centralwidget)
@@ -898,9 +962,12 @@ class Ui_central(object):
         self.lineEdit_IP.setPlaceholderText(_translate("central", "Endereço IP"))
         self.labelBoxBlenderInstalation_2.setText(_translate("central", "STATUS"))
         self.btn_save_config.setText(_translate("central", "Salvar"))
-        self.btn_color_temp.setText(_translate("central", "Temperatura"))
-        self.labelBoxBlenderInstalation_5.setText(_translate("central", "CORES DO GRÁFICO"))
         self.btn_color_humd.setText(_translate("central", "Humidade"))
+        self.spinBox_pontos.setToolTip(_translate("central", "<html><head/><body><p align=\"justify\">Intervalo em segundos limitado a 300 para solicitação de dados ao servidor.</p></body></html>"))
+        self.btn_color_temp.setText(_translate("central", "Temperatura"))
+        self.checkBox_escala.setText(_translate("central", "Escala Automática"))
+        self.labelBoxBlenderInstalation_5.setText(_translate("central", "GRÁFICO"))
+        self.label.setText(_translate("central", "Pontos no Gráfico"))
         self.labelBoxBlenderInstalation_3.setText(_translate("central", "INTERVALO DE REQUISIÇÃO"))
         self.spinBox_request.setToolTip(_translate("central", "<html><head/><body><p align=\"justify\">Intervalo em segundos limitado a 300 para solicitação de dados ao servidor.</p></body></html>"))
         self.labelBoxBlenderInstalation_4.setText(_translate("central", "TENTATIVA DE RECONEXÃO"))
